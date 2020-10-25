@@ -291,6 +291,7 @@ var streams = {
 app.get('/nowplaying/:stream', function(req, res){
   var stream = req.params["stream"];
   var song = streams["stream"]["song"];
+  //make spotify api call to get info
   res.json({id: song});
 });
 
@@ -455,12 +456,29 @@ app.get('/connect', function(req,res){
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
           console.log(body["id"]);
-          //register user and tokens into dictionary
-          users[body["id"]] = {
-            "access": access_token,
-            "refresh": refresh_token,
-          };
-          //adds user to view list for stream
+          var found = false;
+          User.findOneAndUpdate({ userID: body['id'] }, { 
+            access:access_token,
+            refresh: refresh_token,
+            connected: true
+          }, function (err, user){
+            if(user != null){
+              console.log('User exists');
+              found = true;
+            }
+          }).then( ()=>{
+            if(!found){
+              var newUser = new User({
+                      userID: body["id"],
+                      access: access_token,
+                      refresh: refresh_token,
+                      connected: true
+                    });
+                    newUser.save();
+              console.log('New User defined:', newUser);
+            }
+          });
+          //adds user to stream list for db
           streams[user]["viewers"][body["id"]] = "connected";
         });
         res.sendStatus(204);
@@ -496,6 +514,138 @@ app.get('/leave/:stream', function(req, res){
   delete streams[stream]["viewers"][user];
   delete users[user];
   res.sendStatus(204);
+});
+
+app.get('/listen/:stream', function (req, res){
+  console.log('User Joining');
+  var state = generateRandomString(16);
+  res.cookie(stateKey, state);
+  var user = req.query.user;
+  var stream = req.params["stream"];
+  //store stream in db?
+
+  var redirect_uri_streamer = 'http://134.122.27.64/connect/listen'; //register room based off of initial streamer code
+  //application requests authorization
+
+  //scope needed to change location in songs
+  var scope = 'user-modify-playback-state';
+  res.redirect('https://accounts.spotify.com/authorize?' +
+    querystring.stringify({
+      response_type: 'code',
+      client_id: client_id,
+      scope: scope,
+      redirect_uri: redirect_uri_streamer,
+      state: state
+    }));
+});
+
+//URI to return viewer to after Spotify API call
+app.get('/connect/listen', function(req,res){
+  // your application requests refresh and access tokens
+  // after checking the state parameter
+
+  var code = req.query.code || null;
+  var state = req.query.state || null;
+  var storedState = req.cookies ? req.cookies[stateKey] : null;
+  var stream = req.query.stream;
+
+  if (state === null || state !== storedState) {
+    res.redirect('/#' +
+      querystring.stringify({
+        error: 'state_mismatch'
+      }));
+  } else {
+    res.clearCookie(stateKey);
+    var authOptions = {
+      url: 'https://accounts.spotify.com/api/token',
+      form: {
+        code: code,
+        redirect_uri: redirect_uri,
+        grant_type: 'authorization_code'
+      },
+      headers: {
+        'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+      },
+      json: true
+    };
+
+    request.post(authOptions, function(error, response, body) {
+      if (!error && response.statusCode === 200) {
+
+        var access_token = body.access_token,
+            refresh_token = body.refresh_token;
+        // add tokens to user list
+
+        var options = {
+          url: 'https://api.spotify.com/v1/me',
+          headers: { 'Authorization': 'Bearer ' + access_token },
+          json: true
+        };
+
+        // use the access token to access the Spotify Web API
+        request.get(options, function(error, response, body) {
+          console.log(body["id"]);
+          var found = false;
+          User.findOneAndUpdate({ userID: body['id'] }, { 
+            access:access_token,
+            refresh: refresh_token,
+            connected: true
+          }, function (err, user){
+            if(user != null){
+              console.log('User exists');
+              found = true;
+            }
+          }).then( ()=>{
+            if(!found){
+              var newUser = new User({
+                      userID: body["id"],
+                      access: access_token,
+                      refresh: refresh_token,
+                      connected: true
+                    });
+                    newUser.save();
+              console.log('New User defined:', newUser);
+            }
+          });
+          //adds user to stream list for db
+          //streams[stream]["viewers"][body["id"]] = "connected";
+          res.redirect('/play/'+body["id"]);
+        });
+        
+      } else {
+        res.redirect('/#' +
+          querystring.stringify({
+            error: 'invalid_token'
+          }));
+      }
+    });
+  }
+});
+
+app.get('/play/:user', function(req, res){
+  var user = req.param.user;
+  var auth_token = '';
+  var authOptions = {};
+  var hold = User.findOne({ userID:user }, function(err, user){
+    auth_token = user.access;
+    console.log('Token:', auth_token);
+  }).then(() => {
+    authOptions = {
+    url: 'https://api.spotify.com/v1/me/player/play',
+    headers: { 
+      'Authorization': 'Bearer ' + auth_token,
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      "uris": ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh"],
+      "position_ms": 5000,
+    }
+    };
+    console.log('Headers:', authOptions.headers);
+    request.put(authOptions, function(error, response, body){
+      console.log('PUT: play request Sent');
+    });
+    res.sendStatus(204);
+  });
 });
 
 //Implement later to get streamer to close stream
