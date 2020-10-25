@@ -1,0 +1,21 @@
+.sp-now-playing {
+
+}
+
+.left-confirm {
+
+}
+
+.login-prompt h1 {
+    font-size: 36pt;
+    font-family: Arial;
+    color: white;
+}
+
+.login-prompt button {
+    height: 100%;
+    width: 33%;
+    font-size: 24pt;
+    background-color: #1DB954;
+    border-radius: 15px;
+}

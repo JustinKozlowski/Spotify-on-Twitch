@@ -20,6 +20,12 @@
       "isEphemeral": false,
       "isOrigin": true,
       "value": "https://localhost:8080"
+    },
+    {
+      "isAllowed": true,
+      "isEphemeral": false,
+      "isOrigin": false,
+      "value": "https://134.122.27.64/join/video_component.html"
     }
   ],
   "extensionViews": [
