@@ -1,0 +1,68 @@
+{
+  "allowHttpBackend": false,
+  "backendCommand": "",
+  "backendFolderName": "",
+  "certificateExceptions": [],
+  "extensionViews": [],
+  "manifest": {
+    "anchor": "component",
+    "assetUrls": [],
+    "authorName": "",
+    "bitsEnabled": false,
+    "canInstall": true,
+    "configUrl": "https://localhost:8080/config.html",
+    "configurationLocation": "none",
+    "description": "",
+    "eulaTosUrl": "",
+    "hasChatSupport": false,
+    "iconUrl": "",
+    "iconUrls": {},
+    "id": "fm8lcvmjfsveflgx68vw6a90knxcd8",
+    "installationCount": -42,
+    "liveConfigUrl": "",
+    "name": "SpotifySync",
+    "panelHeight": 0,
+    "privacyPolicyUrl": "",
+    "requestIdentityLink": false,
+    "requiredBroadcasterAbilities": [],
+    "screenshotUrls": [],
+    "sku": "",
+    "state": "Testing",
+    "subscriptionsSupportLevel": "none",
+    "summary": "",
+    "supportEmail": "",
+    "vendorCode": "",
+    "version": "0.0.1",
+    "viewerSummary": "",
+    "viewerUrl": "",
+    "viewerUrls": {
+      "component": "https://localhost:8080/video_component.html"
+    },
+    "views": {
+      "component": {
+        "viewerUrl": "https://localhost:8080/video_component.html",
+        "aspectWidth": 0,
+        "aspectHeight": 0,
+        "aspectRatioX": 300,
+        "aspectRatioY": 200,
+        "scalePixels": 1024,
+        "targetHeight": 4000,
+        "size": 0,
+        "zoom": false,
+        "zoomPixels": 0,
+        "canLinkExternalContent": false,
+        "autoScale": true
+      },
+      "config": {
+        "viewerUrl": "https://localhost:8080/config.html",
+        "canLinkExternalContent": false
+      }
+    },
+    "whitelistedConfigUrls": [],
+    "whitelistedPanelUrls": []
+  },
+  "frontendCommand": "",
+  "frontendFolderName": "",
+  "name": "SpotifySync",
+  "version": 2
+}
