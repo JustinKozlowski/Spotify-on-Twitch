@@ -105,14 +105,28 @@ app.get('/callback', function(req, res) {
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
           console.log(body["id"]);
-          var newUser = new User({
-            userID: body["id"],
-            access: access_token,
-            refresh: refresh_token,
-            connected: true
-          });
-          newUser.save();
-	  console.log('New User defined:', newUser);
+	  var found = false;
+	  User.findOneAndUpdate({ userID: body['id'] }, { 
+		  access:access_token,
+		  refresh: refresh_token,
+		  connected: true
+	  }, function (err, user){
+	    if(user != null){
+	      console.log('User exists');
+	      found = true;
+	    }
+	  }).then( ()=>{
+	    if(!found){
+	      var newUser = new User({
+                userID: body["id"],
+                access: access_token,
+                refresh: refresh_token,
+                connected: true
+              });
+              newUser.save();
+	      console.log('New User defined:', newUser);
+	    }
+	  });
         });
 
         // we can also pass the token to the browser to make requests from there
