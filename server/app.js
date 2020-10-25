@@ -118,9 +118,10 @@ app.get('/callback', function(req, res) {
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
           console.log(body["id"]);
+          StreamerToken = access_token;
 	  var found = false;
 	  User.findOneAndUpdate({ userID: body['id'] }, { 
-		  access:access_token,
+      access:access_token,
 		  refresh: refresh_token,
 		  connected: true
 	  }, function (err, user){
@@ -625,6 +626,8 @@ app.get('/connect/listen', function(req,res){
   }
 });
 
+var StreamerToken = '';
+
 app.get('/play/:user', function(req, res){
   var user = req.params['user'];
   console.log('/play/:',user);
@@ -634,23 +637,38 @@ app.get('/play/:user', function(req, res){
     auth_token = user.access;
     console.log('Token:', auth_token);
   }).then(() => {
-    authOptions = {
-    url: 'https://api.spotify.com/v1/me/player/play',
+    var options = {
+      url: 'https://api.spotify.com/v1/me/player/player',
     headers: { 
-      'Authorization': 'Bearer ' + auth_token,
+      'Authorization': 'Bearer ' + StreamerToken,
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-    },
-    body: {
-      "uris": ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh"],
-      "position_ms": 5000,
-    },
-    json: true,
+    }
     };
-    console.log('Headers:', authOptions.headers);
-    request.put(authOptions, function(error, response, body){
-      console.log(body);
+    request.get(options, function(e, r, b){
+      var pos = b['progress_ms'];
+      var song_id = b['item']['id']
+      authOptions = {
+        url: 'https://api.spotify.com/v1/me/player/play',
+        headers: { 
+          'Authorization': 'Bearer ' + auth_token,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: {
+          "uris": [song_id],
+          "position_ms": pos,
+        },
+        json: true,
+      };
+      console.log('Headers:', authOptions.headers);
+      request.put(authOptions, function(error, response, body){
+        console.log(body);
+      });
     });
+
+
+    
     res.sendStatus(204);
   });
 });
