@@ -93,6 +93,8 @@ app.get('/callback', function(req, res) {
 
         var access_token = body.access_token,
             refresh_token = body.refresh_token;
+        
+        
 
         var options = {
           url: 'https://api.spotify.com/v1/me',
@@ -103,7 +105,13 @@ app.get('/callback', function(req, res) {
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
           console.log(body["id"]);
-          
+          var newUser = new User({
+            userID: body["id"],
+            access: access_token,
+            refresh: refresh_token,
+            connected: True
+          });
+          newUser.save();
         });
 
         // we can also pass the token to the browser to make requests from there
@@ -123,8 +131,8 @@ app.get('/callback', function(req, res) {
 });
 
 app.get('/pause', function(req, res){
-  console.log('pause received');
-  var auth_token = req.query.auth_token;
+  var user = req.query.userID;
+  var auth_token = User.find({ name:user })[0]["access"];
   var authOptions = {
     url: 'https://api.spotify.com/v1/me/player/pause',
     headers: { 
@@ -140,8 +148,8 @@ app.get('/pause', function(req, res){
 });
 
 app.get('/play', function(req, res){
-  console.log('play received');
-  var auth_token = req.query.auth_token;
+  var user = req.query.userID;
+  var auth_token = User.find({ name:user })[0]["access"];
   var authOptions = {
     url: 'https://api.spotify.com/v1/me/player/play',
     headers: { 
@@ -183,7 +191,7 @@ const streamSchema = new mongoose.Schema({
 const Stream = mongoose.model('Stream', streamSchema);
 
 
-//refreshes token for the userid provided
+//refreshes token for the userid provided, may need to be changed
 app.get('/refresh_token/:userID', function(req, res) {
 
   // requesting access token from refresh token
@@ -323,6 +331,7 @@ app.get('/create/:streamer', function(req, res) {
           };
           streams[user]["streamer"] = body["id"];
         });
+        res.sendStatus(204);
       } else {
         res.redirect('/#' +
           querystring.stringify({
@@ -355,7 +364,7 @@ app.get('/join/:stream', function (req, res){
 });
 
 //URI to return viewer to after Spotify API call
-app.get('/connect/:stream', function(req,req){
+app.get('/connect/:stream', function(req,res){
   // your application requests refresh and access tokens
   // after checking the state parameter
 
@@ -408,6 +417,7 @@ app.get('/connect/:stream', function(req,req){
           //adds user to view list for stream
           streams[user]["viewers"][body["id"]] = "connected";
         });
+        res.sendStatus(204);
       } else {
         res.redirect('/#' +
           querystring.stringify({
@@ -423,6 +433,7 @@ app.get('/disconnect/:stream', function(req, res){
   var user = req.query.user;
   var stream = req.params["stream"];
   streams[stream]["viewers"][user] = "disconnected";
+  res.sendStatus(204);
 });
 
 //reconnects viewer spotify after being disconnected
@@ -430,6 +441,7 @@ app.get('/reconnect/:stream', function(req, res){
   var user = req.query.user;
   var stream = req.params["stream"];
   streams[stream]["viewers"][user] = "connected";
+  res.sendStatus(204);
 });
 
 app.get('/leave/:stream', function(req, res){
@@ -437,6 +449,7 @@ app.get('/leave/:stream', function(req, res){
   var stream = req.params["stream"];
   delete streams[stream]["viewers"][user];
   delete users[user];
+  res.sendStatus(204);
 });
 
 //Implement later to get streamer to close stream
