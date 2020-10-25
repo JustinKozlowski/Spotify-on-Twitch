@@ -15,7 +15,7 @@ var cookieParser = require('cookie-parser');
 
 var client_id = '0ad3baa2a6564528b19f0ddc20a0a0dd'; // Your client id
 var client_secret = '23ff4e07ee6b49fa9fefb41055bf2110'; // Your secret
-var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+var redirect_uri = 'http://134.122.27.64/callback'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -86,7 +86,6 @@ app.get('/callback', function(req, res) {
       },
       json: true
     };
-    console.log(req);
     
 
     request.post(authOptions, function(error, response, body) {
@@ -143,7 +142,7 @@ app.get('/pause', function(req, res){
     }
   };
   request.put(authOptions, function(error, response, body){
-    console.log('PUT request Sent');
+    console.log('PUT: pause request Sent');
   });
   res.sendStatus(204);
 });
@@ -160,7 +159,7 @@ app.get('/play', function(req, res){
     }
   };
   request.put(authOptions, function(error, response, body){
-    console.log('PUT request Sent');
+    console.log('PUT:play request Sent');
   });
   res.sendStatus(204);
 });
@@ -173,7 +172,7 @@ app.get('/thanks', function(req, res) {
 //Initialize MOngoose and structures for it
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://134.122.27.64/test', {useNewUrlParser: true});
+mongoose.connect('mongodb://12.12.12.12/Streams', {useNewUrlParser: true});
 
 const userSchema = new mongoose.Schema({
   userID: String,
@@ -258,7 +257,7 @@ app.get('/register/:stream', function(req, res) {
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
   var stream = req.params["stream"];
-  var redirect_uri_streamer = 'http://localhost:8888/create/'+stream; //register room based off of initial streamer code
+  var redirect_uri_streamer = 'http://134.122.27.64/create/'+stream; //register room based off of initial streamer code
   //application requests authorization
 
   //scope needed to read status of playing songs
@@ -349,8 +348,7 @@ app.get('/join/:stream', function (req, res){
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
   var stream = req.params["stream"];
-  var uniqueID = req.query.uniqueID;
-  var redirect_uri_streamer = 'http://localhost:8888/connect/'+stream; //register room based off of initial streamer code
+  var redirect_uri_streamer = 'http://134.122.27.64/connect/'+stream; //register room based off of initial streamer code
   //application requests authorization
 
   //scope needed to change location in songs
@@ -457,5 +455,5 @@ app.get('/leave/:stream', function(req, res){
 //Implement later to get streamer to close stream
 //app.get('/close/:stream', function(req,res){});
 
-console.log('Listening on 8888');
-app.listen(8888);
+console.log('Listening on 80');
+app.listen(80);
