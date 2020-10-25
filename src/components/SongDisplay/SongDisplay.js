@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 import './SongDisplay.css';
 
 export default function SongDisplay(props) {
+    const [ streamer, setStreamer ] = useState("");
+    const [ activeConnection, setActiveConnection ]
+          = useState(Connection.NOT_CONNECTED);
+
     const [ albumArt, setAlbumArt ] = useState("");
     const [ track, setTrack ] = useState("");
     const [ artist, setArtist ] = useState("");
@@ -16,7 +20,7 @@ export default function SongDisplay(props) {
     }
 
     const URLBuilder = {
-        base: 'fronk.justinkozlowski.me:8888',
+        base: '134.122.27.64',
         join: '/join/',
         nowPlaying: '/nowplaying/',
         disconnect: '/disconnect/',
@@ -26,9 +30,9 @@ export default function SongDisplay(props) {
 
     const NowPlaying = (props) => {
         return (
-            <span class="sp-now-playing">
+            <span className="sp-now-playing">
               <img id="album-art" src={props.albumArt} />
-              <div class="text-info">
+              <div className="text-info">
                 <h3>{props.track}</h3>
                 <h4>{props.artist}</h4>
               </div>
@@ -48,51 +52,52 @@ export default function SongDisplay(props) {
     const LeftStream = () => {
         return (
             <div className="left-confirm">
-              <h2>You've left the party. See you again soon!</h2>
+              <h2>You&apos;ve left the party. See you again soon!</h2>
             </div>
         )
     }
 
-    async function join(streamer) {
+    async function join() {
         const response = await axios.get(URLBuilder.base
                                          + URLBuilder.join
-                                         + streamer)
-                                    .catch((error)
-                                           => console.log(error));
-        setUser(response.data.user);
-    };
+                                         + streamer, {user: props.userId})
+                                    .catch((error) => console.log(error));
 
-    async function getCurrentSong(streamer) {
+        if (response.status === 200) {
+            setActiveConnection(Connection.CONNECTED);
+        }
+       
+        setInterval(() => {
+            window.Twitch.ext.rig.log("Get current song");
+            getCurrentSong();
+        }, 3000);
+    }
+
+    async function getCurrentSong() {
         const response = await axios.get(URLBuilder.base
                                          + URLBuilder.nowPlaying
-                                         + streamer, {user: user});
-        setAlbumArt(response.data.albumart);
+                                         + streamer);
+        setAlbumArt(response.data.albumArt);
         setArtist(response.data.artist);
         setTrack(response.data.track);
     }
 
-    switch (status) {
-        case statuses.NOT_CONNECTED:
+    switch (activeConnection) {
+        case Connection.NOT_CONNECTED:
             return <LoginPrompt />;
-            break;
-        case statuses.CONNECTED:
+        case Connection.CONNECTED:
             return <NowPlaying
                      albumArt={albumArt}
                      track={track}
                      artist={artist}
                    />;
-            break;
-        case statuses.USER_DISCONNECTED:
+        case Connection.USER_DISCONNECTED:
             return <NowPlaying
                      albumArt={albumArt}
                      track={track}
                      artist={artist}
                    />;
-            break;
-        case statuses.LEFT:
-            return <LeftConfirmation />;
-            break;
+        case Connection.LEFT:
+            return <LeftStream />;
     }
-    
-    setTimeout(getCurrentSong, 3000);
 }
