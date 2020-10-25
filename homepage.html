@@ -10,7 +10,10 @@
             font-family: "Comic Sans MS";
         }
         body{
-            background-image: url('https://cdn.discordapp.com/attachments/726269281922318366/769689211128512572/Z.png');
+            background: skyblue;
+            height: 100vh;
+            width: 100vw;
+            overflow: scroll;
         }
         #banner{
             width: 100%;
@@ -22,36 +25,156 @@
             width:100%;
             height: 93px;
             background:mediumseagreen;
-            position:fixed;
+            position:absolute;
             top:0;
             left:0;
         }
         #usernameBox {
             width:100%;
             height: 80px;
-            position: fixed;
-            background: mediumseagreen;
+            position: absolute;
             text-align: center;
+            top: 16.5%;
+            left: 0%;
+            align-content: center;
+        }
+        #usernameInner {
+            width: 50%;
+            height: 90px;
+            position: absolute;
+            align-content: center;
+            background: mediumseagreen;
+            text-align:left;
+            top: 16.5%;
+            left: 25%;
+        }
+        #logoTopLeft {
+            position: absolute;
+            left: 0%;
+            top: 0%;
+            padding: 5px;
+        }
+        #logoTopRight {
+            position: absolute;
+            left: 95%;
+            top:0%;
+            padding: 5px;
+        }
+        #line {
+            position: absolute;
             top: 50%;
             left: 0%;
         }
+        #liveStreams {
+            position: absolute;
+            left: 25%;
+            top: 44%;
+            font-family: "Comic Sans MS";
+        }
+        #table {
+            position: absolute;
+            left: 25%;
+            top: 55%;
+            width: 60%;
+            font-family: "Comic Sans MS";
+        }
+        #submitButton {
+            width: 3em;
+            height: 3em;
+        }
+        #username {
+            height: 2em;
+        }
+
     </style>
 </head>
 <body>
 <div id="rectangle">
+    <div id="logoTopLeft">
+        <img src="https://cdn.discordapp.com/attachments/726269281922318366/769743396922327070/ripofflogo.png" style="height: 11%; width: 20%">
+    </div>
+    <div id="logoTopRight">
+        <img src="https://cdn.discordapp.com/attachments/726269281922318366/769745752694980638/ripofflogo2.png" style="height:100%; width:100%">
+    </div>
     <div id="header">
         <h1> Experience Spotty Fi </h1>
     </div>
 </div>
-<div id="usernameBox">
+<div id="usernameInner">
+    <div id="usernameBox">
     <p>
-        Enter your twitch.tv username:
         <form method="GET" action="register.html">
-
-            <input type="text" id="username" name="username" >
-            <input type="submit" value="Submit">
+            <label style="font-family: 'Comic Sans MS'; font-size: 24px"> Register </label>
+            <input type="text" id="username" name="username" placeholder="Twitch Username">
+            <input id="submitButton" type="submit" value="✓">
         </form>
     </p>
+    </div>
+</div>
+<div id="liveStreams">
+    <h1> Live Streams </h1>
+</div>
+<div id="line">
+    <hr style="height:2px;width:1900px;color:gray;background-color:gray">
+</div>
+<div id="table" >
+    <table style="width:100%">
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        <tr>
+            <td>Streamer Name 1</td>
+            <td><img src="plugAlbum.png" style="max-height: 120px; max-width: 120px; float: right"> </td>
+            <td>The Plug</td>
+            <td>
+                <a href="https://twitch.tv">
+                <img src="ripofflogo2.png" style="max-height: 30px; max-width: 30px">
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>Streamer Name 2</td>
+            <td><img src="pluggedIn.png" style="max-height: 120px; max-width: 120px; float: right"> </td>
+            <td>Unplugged</td>
+            <td>
+                <a href="https://twitch.tv">
+                <img src="ripofflogo2.png" style="max-height: 30px; max-width: 30px">
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>Streamer Name 3</td>
+            <td><img src="ripofflogo.png" style="max-height: 120px; max-width: 120px; float: right"> </td>
+            <td>Purple Spot</td>
+            <td>
+                <a href="https://twitch.tv">
+                    <img src="ripofflogo2.png" style="max-height: 30px; max-width: 30px">
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>Streamer Name 4</td>
+            <td><img src="ripofflogo.png" style="max-height: 120px; max-width: 120px; float: right"> </td>
+            <td>You will be running out of room if </td>
+            <td>
+                <a href="https://twitch.tv">
+                    <img src="ripofflogo2.png" style="max-height: 30px; max-width: 30px">
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>Streamer Name 5</td>
+            <td><img src="ripofflogo.png" style="max-height: 120px; max-width: 120px; float: right"> </td>
+            <td>testing scroll</td>
+            <td>
+                <a href="https://twitch.tv">
+                    <img src="ripofflogo2.png" style="max-height: 30px; max-width: 30px">
+                </a>
+            </td>
+        </tr>
+    </table>
 </div>
 </body>
 </html>
