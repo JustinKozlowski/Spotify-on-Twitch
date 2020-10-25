@@ -1,7 +1,7 @@
 import React from 'react'
 import Authentication from '../../util/Authentication/Authentication'
-import SongDisplay from '../SongDisplay'
-import nanoid from 'nanoid'
+import SongDisplay from '../SongDisplay/SongDisplay'
+import { nanoid } from 'nanoid'
 
 import './App.css'
 
@@ -41,7 +41,6 @@ export default class App extends React.Component{
                 this.Authentication.setToken(auth.token, auth.userId)
                 if(!this.state.finishedLoading){
                     // if the component hasn't finished loading (as in we've not set up after getting a token), let's set it up now.
-
                     // now we've done the setup for the component, let's set the state to true to force a rerender with the correct data.
                     this.setState(()=>{
                         return {finishedLoading:true}
@@ -77,23 +76,23 @@ export default class App extends React.Component{
         this.twitch.rig.log("finished: "
                             + this.state.finishedLoading
                             + " visible: "
-                            + this.state.isVisible);
-        if(this.state.finishedLoading && this.state.isVisible){
-            const Id = nanoid();
-            this.twitch.rig.log(Id);
-            return (
-                <div className="SongDisplay">
-                  <SongDisplay userId={Id}/>
-                </div>
-            )
-        }else{
-            this.twitch.rig.log("Nothing happened.");
-            return (
-                <div className="App">
-                  <h1>There's nothing here...</h1>
-                </div>
-            )
-        }
+                            + this.state.isVisible)
+        const userId = nanoid()
+        return (
+            <div className="song-display">
+              <SongDisplay userId={userId}/>
+            </div>
+        )
+        // if(this.state.finishedLoading && this.state.isVisible){
+        //     this.twitch.rig.log("Inside")
+        // }else{
+        //     this.twitch.rig.log("Nothing happened.");
+        //     return (
+        //         <div className="App">
+        //           <h1>There's nothing here...</h1>
+        //         </div>
+        //     )
+        // }
 
     }
 }
