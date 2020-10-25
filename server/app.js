@@ -524,7 +524,7 @@ app.get('/listen/:stream', function (req, res){
   var stream = req.params["stream"];
   //store stream in db?
 
-  var redirect_uri_streamer = 'http://134.122.27.64/connect/listen'; //register room based off of initial streamer code
+  var redirect_uri_streamr = 'http://134.122.27.64/connect/listen'; //register room based off of initial streamer code
   //application requests authorization
 
   //scope needed to change location in songs
@@ -534,7 +534,7 @@ app.get('/listen/:stream', function (req, res){
       response_type: 'code',
       client_id: client_id,
       scope: scope,
-      redirect_uri: redirect_uri_streamer,
+      redirect_uri: redirect_uri_streamr,
       state: state
     }));
 });
@@ -560,7 +560,7 @@ app.get('/connect/listen', function(req,res){
       url: 'https://accounts.spotify.com/api/token',
       form: {
         code: code,
-        redirect_uri: redirect_uri,
+        redirect_uri: 'http://134.122.27.64/connect/listen',
         grant_type: 'authorization_code'
       },
       headers: {
