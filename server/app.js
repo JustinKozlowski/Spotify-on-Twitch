@@ -157,28 +157,26 @@ app.get('/pause', function(req, res){
 
 app.get('/play', function(req, res){
   var user = req.query.userID;
-  console.log('query get req', user);
-  //console.log('query for userID:', User.findOne({userID:user}, function (err, user){
-    //console.log('userfound', user);
-  //})[0]);
   var auth_token = '';
-  User.findOne({ userID:user }, function(err, user){
+  var authOptions = {};
+  var hold = User.findOne({ userID:user }, function(err, user){
     auth_token = user.access;
-    console.log('auth_token:', user.access)
-  });
-  console.log('saved token:', auth_token);
-  var authOptions = {
+    console.log('Token:', auth_token);
+  }).then(() => {
+    authOptions = {
     url: 'https://api.spotify.com/v1/me/player/play',
     headers: { 
       'Authorization': 'Bearer ' + auth_token,
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     }
-  };
-  request.put(authOptions, function(error, response, body){
-    console.log('PUT:play request Sent');
+    };
+    console.log('Headers:', authOptions.headers);
+    request.put(authOptions, function(error, response, body){
+      console.log('PUT: pause request Sent');
+    });
+    res.sendStatus(204);
   });
-  res.sendStatus(204);
 });
 
 app.get('/thanks', function(req, res) {
