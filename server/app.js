@@ -47,6 +47,12 @@ app.use(express.static(__dirname + '/public'))
    .use(cors())
    .use(cookieParser());
 
+app.use(function(req,res,next){
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 //Starting From here this is test code for trying the api
 app.get('/login', function(req, res) {
 
