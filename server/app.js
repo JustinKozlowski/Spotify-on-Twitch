@@ -164,7 +164,7 @@ app.get('/thanks', function(req, res) {
 //Initialize MOngoose and structures for it
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://12.12.12.12/Streams', {useNewUrlParser: true});
+mongoose.connect('mongodb://localhost/Streams', {useNewUrlParser: true}, () => {console.log('Mongo Connected')});
 
 const userSchema = new mongoose.Schema({
   userID: String,
