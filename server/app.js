@@ -7,6 +7,13 @@
  * https://developer.spotify.com/web-api/authorization-guide/#authorization_code_flow
  */
 
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
+var privateKey = fs.readFileSync(__dirname+ '/server.key', 'utf8');
+var certificate = fs.readFileSync(__dirname + '/server.cert', 'utf8');
+
+var credentials = {key: privateKey, cert: certificate};
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var cors = require('cors');
@@ -374,6 +381,7 @@ app.get('/create/:streamer', function(req, res) {
 
 //Adds user to viewers for stream. returns {json:""}?
 app.get('/join/:stream', function (req, res){
+  console.log('User Joining');
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
   var user = req.query.user;
@@ -487,5 +495,12 @@ app.get('/leave/:stream', function(req, res){
 //Implement later to get streamer to close stream
 //app.get('/close/:stream', function(req,res){});
 
-console.log('Listening on 80');
-app.listen(80);
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
+httpServer.listen(80, () => {
+  console.log('Listening on 80');
+});
+httpsServer.listen(443, ()=>{
+  console.log('Listening on 443');
+});
