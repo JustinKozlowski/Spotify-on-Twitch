@@ -376,8 +376,11 @@ app.get('/create/:streamer', function(req, res) {
 app.get('/join/:stream', function (req, res){
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
+  var user = req.query.user;
   var stream = req.params["stream"];
-  var redirect_uri_streamer = 'http://134.122.27.64/connect/'+stream; //register room based off of initial streamer code
+  //store stream in db?
+
+  var redirect_uri_streamer = 'http://134.122.27.64/connect'; //register room based off of initial streamer code
   //application requests authorization
 
   //scope needed to change location in songs
@@ -393,14 +396,14 @@ app.get('/join/:stream', function (req, res){
 });
 
 //URI to return viewer to after Spotify API call
-app.get('/connect/:stream', function(req,res){
+app.get('/connect', function(req,res){
   // your application requests refresh and access tokens
   // after checking the state parameter
 
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
-  var stream = req.params["stream"];
+  var stream = req.query.stream;
 
   if (state === null || state !== storedState) {
     res.redirect('/#' +
