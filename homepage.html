@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <title>Spotty Fi</title>
     <link rel="icon" href="https://cdn.discordapp.com/attachments/726269281922318366/769673880918687744/plug.png">
+    <script type="text/javascript">
+        function connectToStreamer() {
+            const streamer = document.querySelector('#username').value;
+            var req = new XMLHttpRequest();
+
+            req.open('GET', '/listen/' + streamer, true);
+            req.onreadystatechange = () => {
+                if (req.status === 0 || (req.status >= 200 && req.status < 400)) {
+                    window.location.href = '/register.html';
+                }
+                console.log('Got ' + req.status + ' response.');
+            };
+            req.send();
+        }
+    </script>
+
     <style>
         #header{
             text-align: center;
@@ -110,7 +126,7 @@
         <form method="GET" action="register.html">
             <label style="font-family: 'Comic Sans MS'; font-size: 24px"> Register </label>
             <input type="text" id="username" name="username" placeholder="Twitch Username">
-            <input id="submitButton" type="submit" value="✓">
+            <button id="submitButton" type="button" onClick="connectToStreamer">✓</button>
         </form>
     </p>
     </div>
