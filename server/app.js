@@ -581,10 +581,11 @@ app.get('/connect/listen', function(req,res){
           headers: { 'Authorization': 'Bearer ' + access_token },
           json: true
         };
-
+	var user_ID = '';
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
           console.log(body["id"]);
+	  user_ID = body['id'];
           var found = false;
           User.findOneAndUpdate({ userID: body['id'] }, { 
             access:access_token,
@@ -593,6 +594,7 @@ app.get('/connect/listen', function(req,res){
           }, function (err, user){
             if(user != null){
               console.log('User exists');
+	      console.log(user);
               found = true;
             }
           }).then( ()=>{
@@ -609,7 +611,8 @@ app.get('/connect/listen', function(req,res){
           });
           //adds user to stream list for db
           //streams[stream]["viewers"][body["id"]] = "connected";
-          res.redirect('/play/'+body["id"]);
+	  console.log('routing to /play/'+user_ID);
+          res.redirect('/play/'+user_ID);
         });
         
       } else {
@@ -623,7 +626,8 @@ app.get('/connect/listen', function(req,res){
 });
 
 app.get('/play/:user', function(req, res){
-  var user = req.param.user;
+  var user = req.params['user'];
+  console.log('/play/:',user);
   var auth_token = '';
   var authOptions = {};
   var hold = User.findOne({ userID:user }, function(err, user){
@@ -636,13 +640,16 @@ app.get('/play/:user', function(req, res){
       'Authorization': 'Bearer ' + auth_token,
       'Accept': 'application/json',
       'Content-Type': 'application/json',
+    },
+    body: {
       "uris": ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh"],
       "position_ms": 5000,
-    }
+    },
+    json: true,
     };
     console.log('Headers:', authOptions.headers);
     request.put(authOptions, function(error, response, body){
-      console.log('PUT: play request Sent');
+      console.log(body);
     });
     res.sendStatus(204);
   });
